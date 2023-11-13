@@ -3,10 +3,10 @@ import os
 
 def plot_maps(map):
     # Surface mesh files
-    surf_mesh = os.path.join('..','resources','surface_meshes','fs_LR.32k.{hemi}.very_inflated.surf.gii')
+    surf_mesh = os.path.join('resources','surface_meshes','fs_LR.32k.{hemi}.very_inflated.surf.gii')
 
     # Glasser atlas files
-    surf_atlas = os.path.join('..','resources','surface_atlases','Glasser_2016.32k.{hemi}.label.gii')
+    surf_atlas = os.path.join('resources','surface_atlases','Glasser_2016.32k.{hemi}.label.gii')
 
     kws = {'location': 'bottom', 'label_direction': 45, 'decimals': 2,
     'fontsize': 8, 'n_ticks': 7, 'shrink': 0.5, 'aspect': 40}

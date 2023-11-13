@@ -7,7 +7,7 @@ def roi2gii(roi_data, fpath, fname):
     # Iterate on Left and Right hemispheres
     for hemi in ['L', 'R']:
         # Load atlas file for the hemisphere
-        label_gii = nib.load(os.path.join('..','resources','surface_atlases',f'Glasser_2016.32k.{hemi}.label.gii'))
+        label_gii = nib.load(os.path.join('resources','surface_atlases',f'Glasser_2016.32k.{hemi}.label.gii'))
         label_data = label_gii.darrays[0].data
         # Copy ROI value to vertices 
         n_vertices = len(label_data)
