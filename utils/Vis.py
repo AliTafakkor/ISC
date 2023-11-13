@@ -3,7 +3,7 @@ import os
 
 def plot_maps(map):
     # Surface mesh files
-    surf_mesh = os.path.join('resources','surface_meshes','fs_LR.32k.{hemi}.very_inflated.surf.gii')
+    surf_mesh = os.path.join('resources','surface_meshes','fs_LR_32K','fs_LR.32k.{hemi}.very_inflated.surf.gii')
 
     # Glasser atlas files
     surf_atlas = os.path.join('resources','surface_atlases','Glasser_2016.32k.{hemi}.label.gii')
@@ -16,5 +16,5 @@ def plot_maps(map):
     # plot the map
     p.add_layer({'left': map.format(hemi='L'), 'right': map.format(hemi='R')}, cbar=True)
     # plot atlas borders
-    p.add_layer({'left': surf_atlas.format(hemi='l'), 'right': surf_atlas.format(hemi='r')}, cmap='gray', as_outline=True, cbar=False)
+    p.add_layer({'left': surf_atlas.format(hemi='L'), 'right': surf_atlas.format(hemi='R')}, cmap='gray', as_outline=True, cbar=False)
     fig = p.build(cbar_kws=kws)
