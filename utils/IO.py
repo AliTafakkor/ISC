@@ -2,6 +2,7 @@ import h5py
 import glob
 import os
 import pandas as pd
+import numpy as np
 
 def get_dimensions(filepath):
     """Extract dimensions of data from h5 data."""
@@ -57,3 +58,30 @@ def build_dataframe(directory):
     df = pd.DataFrame([get_info(file) for file in files])
     
     return df
+
+def load_runs_HDF(runs_df, n_vols):
+    """Load data stored in the HDF files given the runs dataframe."""
+    # Loading only the first run
+    with h5py.File(runs_df['full_path'].iloc[0], 'r') as f:
+            # Load the parcellated data
+            data = f['parcellated_data'][:]
+            data = data[:,:n_vols] # Ignoring excessive volumes
+    return data
+
+def load_subjects(df, subjects, n_vols):
+    data = {'L':[], 'R':[]}
+    for i, subj in enumerate(subjects):
+        # Filter subject
+        df_s = df[df['subject'] == subj]
+        # Load Left and Right hemispheres
+        for h in ['L', 'R']:
+            data[h].append(load_runs_HDF(df_s[df_s['hemi'] == h], n_vols))
+
+    # for Lett and Right hemispheres
+    for h in ['L', 'R']:
+        # Stacking subjects data (Subject, ROI, Time)
+        data[h] = np.stack(data[h])
+        # Organizing data in (ROI, Subject, Time) shape for more efficient slicing when calculating ISCs
+        data[h] = np.transpose(data[h], axes=(1, 0, 2))
+    
+    return data
