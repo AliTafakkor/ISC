@@ -59,14 +59,16 @@ def build_dataframe(directory):
     
     return df
 
+
 def load_runs_HDF(runs_df, n_vols):
     """Load data stored in the HDF files given the runs dataframe."""
-    # Loading only the first run
-    with h5py.File(runs_df['full_path'].iloc[0], 'r') as f:
+    # Loading only the last run
+    with h5py.File(runs_df['full_path'].iloc[-1], 'r') as f:
             # Load the parcellated data
             data = f['parcellated_data'][:]
             data = data[:,:n_vols] # Ignoring excessive volumes
     return data
+
 
 def load_subjects(df, subjects, n_vols):
     data = {'L':[], 'R':[]}
