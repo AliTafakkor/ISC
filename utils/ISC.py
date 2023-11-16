@@ -38,7 +38,7 @@ def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
             elif method == 'pairwise-mat':
                 ISC[h].append(corr_mat)
             elif method == 'pairwise-mixed':
-                ISC[f'b_{h}'].append(corr_mat[mask_b])
+                ISC[f'b_{h}'].append(corr_mat[n_g1:, :n_g1]) # dimensions: n_g2 x n_g1
                 ISC[f'w_g1_{h}'].append(corr_mat[mask_wg1])
                 ISC[f'w_g2_{h}'].append(corr_mat[mask_wg2])
             elif method == 'loo':
