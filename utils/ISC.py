@@ -13,9 +13,9 @@ def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
         (method == 'loo')):
         ISC = {'L':[], 'R':[]}
     elif method == 'pairwise-mixed':
-        ISC = {'b_L':[], 'b_R':[],
-               'w_g1_L':[], 'w_g1_R':[],
-               'w_g2_L':[], 'w_g2_R':[]
+        ISC = {'b_L':[], 'b_R':[], # contain between groups correlattions
+               'w_g1_L':[], 'w_g1_R':[], # contain within group1 correlattions
+               'w_g2_L':[], 'w_g2_R':[] # contain within group2 correlattions
                }
         mask_b = np.zeros((len(subjects),)*2, dtype=bool)
         mask_b[n_g1:, :n_g1] = 1
