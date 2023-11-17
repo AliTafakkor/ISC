@@ -25,7 +25,8 @@ def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
         mask_wg2 = np.zeros((len(subjects),)*2, dtype=bool)
         mask_wg2[n_g1:,n_g1:] = 1
         mask_wg2 = mask_wg2 & mask
-    elif method == 'Xloo':
+    elif ((method == 'Xloo') |
+          (method == 'Xloo2')):
         ISC = {'CL':[], 'CR':[],
                'XL':[], 'XR':[]
                }
@@ -55,6 +56,28 @@ def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
                     subject_int = data[h][roi,s,:]
                     corr = np.corrcoef(subject_int, g2_mean)
                     isc.append(corr[0,1])
+                ISC[f'X{h}'].append(isc)
+                isc = []
+                for s in range(n_g1,n_subjects):
+                    subjects_loo = [x for x in range(n_g1,n_subjects) if x != s]
+                    subject_int = data[h][roi,s,:]
+                    subjects_mean = np.mean(data[h][roi,subjects_loo,:], axis=0)
+                    corr = np.corrcoef(subject_int, subjects_mean)
+                    isc.append(corr[0,1])
+                ISC[f'C{h}'].append(isc)
+            elif method == 'Xloo2':
+                isc = []
+                for s in range(n_g1): # iterate on subjects in group 1
+                    temp = []
+                    for s2 in range(n_g1,n_subjects):
+                        # leave one subject out from group 2
+                        subjects_loo = [x for x in range(n_g1,n_subjects) if x != s2]
+                        g2_subjects_mean = np.mean(data[h][roi,subjects_loo,:], axis=0)
+                        
+                        subject_g1 = data[h][roi,s,:]
+                        corr = np.corrcoef(subject_g1, g2_subjects_mean)
+                        temp.append(corr[0,1])
+                    isc.append(temp)
                 ISC[f'X{h}'].append(isc)
                 isc = []
                 for s in range(n_g1,n_subjects):
