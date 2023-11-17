@@ -69,12 +69,12 @@ def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
                 isc = []
                 for s in range(n_g1): # iterate on subjects in group 1
                     temp = []
+                    subject_g1 = data[h][roi,s,:]
                     for s2 in range(n_g1,n_subjects):
                         # leave one subject out from group 2
                         subjects_loo = [x for x in range(n_g1,n_subjects) if x != s2]
                         g2_subjects_mean = np.mean(data[h][roi,subjects_loo,:], axis=0)
                         
-                        subject_g1 = data[h][roi,s,:]
                         corr = np.corrcoef(subject_g1, g2_subjects_mean)
                         temp.append(corr[0,1])
                     isc.append(temp)
