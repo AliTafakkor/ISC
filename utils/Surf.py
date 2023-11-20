@@ -13,7 +13,7 @@ def roi2gii(roi_data, fpath, fname):
         n_vertices = len(label_data)
         surface_values = np.zeros(n_vertices, dtype='float32')
         for roi_label, value in enumerate(roi_data[hemi]):
-            vertices = (label_data == roi_label+1)
+            vertices = (label_data == roi_label)
             surface_values[vertices] = value
         
         # Create a GIFTI data array for the map
