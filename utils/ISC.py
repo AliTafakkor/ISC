@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 
 def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
@@ -32,7 +33,9 @@ def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
                }
         
     for h in ['L','R']:
-        for roi in range(1,n_rois):
+        # verbose
+        print(f'Processing hemisphere: {h}')
+        for roi in tqdm(range(n_rois)):
             corr_mat = np.corrcoef(data[h][roi,subjects,:])
             if method == 'pairwise-mean':
                 ISC[h].append(corr_mat[mask].mean())
