@@ -30,7 +30,7 @@ def vertex2gii(vertex_data, fpath, fname):
     # Iterate on Left and Right hemispheres
     for hemi in ['L', 'R']:
         # Create a GIFTI data array for the map
-        gii_darray = nib.gifti.GiftiDataArray(data=vertex_data[hemi], intent=nib.nifti1.intent_codes['NIFTI_INTENT_SHAPE'])
+        gii_darray = nib.gifti.GiftiDataArray(data=vertex_data[hemi].astype('float32'), intent=nib.nifti1.intent_codes['NIFTI_INTENT_SHAPE'])
         # Create a GIFTI image for the map
         gii_image = nib.gifti.GiftiImage(darrays=[gii_darray])
         # Save GIFTI image
