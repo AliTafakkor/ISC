@@ -47,11 +47,12 @@ def get_info(filepath):
     return info
 
 
-def build_dataframe(directory):
+def build_dataframe(directory, pattern=None):
     """Build a dataframe from files in the directory and its subdirectories."""
-    # Pattern for search
-    subject, hemi, task, run, fwhm, confounds = ('*', '*', '*', '*', 0, 5)   
-    pattern = os.path.join(directory, '**', f"sub-{subject}_hemi-{hemi}_task-{task}_run-{run}_space-fsLR_den-32k_desc-denoised_fwhm-{fwhm}_confounds-{confounds}_atlas-glasser.h5")
+    # Default Pattern for search
+    if pattern == None:
+        subject, hemi, task, run, fwhm, confounds = ('*', '*', '*', '*', 0, 1)   
+        pattern = os.path.join(directory, '**', f"sub-{subject}_hemi-{hemi}_task-{task}_run-{run}_space-fsLR_den-32k_desc-denoised_fwhm-{fwhm}_confounds-{confounds}_atlas-glasser.h5")
     # Get all files matching the pattern
     files = glob.glob(pattern, recursive=True)
     # Building the dataframe
