@@ -1,6 +1,7 @@
 import numpy as np
 from tqdm import tqdm
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import partial
 
 def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
     # Calculate ISC
@@ -93,3 +94,54 @@ def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
                     
 
     return {key: np.array(value) for key, value in ISC.items()}
+
+def _nonparam_test(data, n_perm):
+    # Data with dimensions: Subject x Time
+    n_subj, n_tp = data.shape
+    # Declare return matrix with size Subject x Permutation+1
+    isc = np.zeros((n_subj, n_perm+1))
+    for lo_sub in range(n_subj):
+        # Subject indices excluding the left out subject 
+        row_indices = np.array([s for s in range(n_subj) if s!=lo_sub])[:, np.newaxis]
+        # Define variable to store original and shifted samples
+        shifted_perms = np.zeros((n_perm+1, n_tp))
+        # Original synchrony
+        shifted_perms[0,:] = np.mean(data[row_indices, :], axis=0)
+        # Produce shifted samples 
+        for i in range(n_perm):
+            shift_values = np.random.randint(0, n_tp, size=n_subj-1)
+            col_indices = (np.arange(n_tp) - shift_values[:, np.newaxis])
+            shifted_perms[i+1,:] = np.mean(data[row_indices, col_indices], axis=0)
+        # Calculate and store the correlations
+        corr = np.corrcoef(np.vstack((data[lo_sub, :],shifted_perms)))
+        isc[lo_sub,:] = corr[1:,0]
+        
+    return isc
+
+
+def nonparam_test(data, n_perm):
+    result = dict()
+    for hemi in ['L', 'R']:
+        print(f'processing {hemi} hemisphere')
+        # Data with dimensions: Units x Subjects x Time
+        n_units, n_subj, _ = data[hemi].shape
+
+        partial_nonparam_test = partial(_nonparam_test, n_perm=n_perm)
+        units = range(n_units)
+
+        result[hemi]  = np.zeros((n_units,n_subj,n_perm+1))
+
+        with ThreadPoolExecutor(max_workers=16) as executor:
+            # Map the function to the items and keep track of the futures
+            futures = {executor.submit(partial_nonparam_test, data[hemi][unit]): unit for unit in units}
+
+            # Progress bar setup
+            with tqdm(total=len(units)) as progress_bar:
+                for future in as_completed(futures):
+                    # Result of a completed task
+                    unit_id = futures[future]  # Get the unit identifier
+                    result[hemi][unit_id,:,:] = future.result()
+                    # Update the progress bar
+                    progress_bar.update(1)
+
+    return result
