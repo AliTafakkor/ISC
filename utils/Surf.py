@@ -2,7 +2,7 @@ import nibabel as nib
 import numpy as np
 import os
 
-def roi2gii(roi_data, fpath, fname):
+def roi2gii(roi_data, fpath, fname, mask=None):
     """Create GIFTI Image from ROI values and save it in the results."""
     # Iterate on Left and Right hemispheres
     for hemi in ['L', 'R']:
@@ -13,6 +13,8 @@ def roi2gii(roi_data, fpath, fname):
         n_vertices = len(label_data)
         surface_values = np.zeros(n_vertices, dtype='float32')
         for roi_label, value in enumerate(roi_data[hemi]):
+            if (mask != None) and (not mask[hemi][roi_label]):
+                continue
             vertices = (label_data == roi_label)
             surface_values[vertices] = value
         
