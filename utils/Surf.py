@@ -18,12 +18,7 @@ def roi2gii(roi_data, fpath, fname, mask=None):
             vertices = (label_data == roi_label)
             surface_values[vertices] = value
         
-        # Create a GIFTI data array for the map
-        gii_darray = nib.gifti.GiftiDataArray(data=surface_values, intent=nib.nifti1.intent_codes['NIFTI_INTENT_SHAPE'])
-        # Create a GIFTI image for the map
-        gii_image = nib.gifti.GiftiImage(darrays=[gii_darray])
-        # Save GIFTI image
-        nib.save(gii_image, os.path.join(fpath,f'{fname}_{hemi}.shape.gii'))
+    vertex2gii(surface_values, fpath, fname)
 
     return surface_values
 
