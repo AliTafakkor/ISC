@@ -3,7 +3,7 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import partial
 
-def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
+def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None, verbose=True):
     # Calculate ISC
     n_subjects = len(subjects)
     mask = np.tril(np.ones(n_subjects, dtype=bool), k=-1)
@@ -35,8 +35,9 @@ def calculate_ISC(data, subjects:range, method='pairwise-mean', n_g1=None):
         
     for h in ['L','R']:
         # verbose
-        print(f'Processing hemisphere: {h}')
-        for roi in tqdm(range(n_rois)):
+        if verbose:
+            print(f'Processing hemisphere: {h}')
+        for roi in tqdm(range(n_rois), disable=not verbose):
             corr_mat = np.corrcoef(data[h][roi,subjects,:])
             if method == 'pairwise-mean':
                 ISC[h].append(corr_mat[mask].mean())
